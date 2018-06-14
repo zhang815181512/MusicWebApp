@@ -1,21 +1,7 @@
-# musicwebapp
+# MusicWebApp
 
-> A Vue.js project
+> 学习慕课网[Vue 2.0 高级实战-开发移动端音乐WebApp](https://coding.imooc.com/class/107.html)
 
-## Build Setup
+> 已经使用Vue做过几个项目了，自我感觉还是有待提升。利用工作之余的时间想要在深入搞一搞。--- 2018.6.14
 
-``` bash
-# install dependencies
-npm install
-
-# serve with hot reload at localhost:8080
-npm run dev
-
-# build for production with minification
-npm run build
-
-# build for production and view the bundle analyzer report
-npm run build --report
-```
-
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+## 进阶总结
