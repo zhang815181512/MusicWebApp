@@ -1,10 +1,19 @@
 <template>
   <div id="app">
-    hello World
+    <MHeader></MHeader>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </div>
 </template>
 
-<script>
+<script type="text/ecmascript-6">
+  import MHeader from 'components/m-header/m-header'
+  export default {
+    components: {
+      MHeader
+    }
+  }
 
 </script>
 
