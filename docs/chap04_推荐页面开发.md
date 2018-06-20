@@ -137,3 +137,35 @@ export default {
 
 ## 轮播图组件
 ### slider基础组件开发
+```
+// 涉及到的文件有
+src/base/slider/slider.vue
+src/common/js/dom.js
+src/components/recommend/recommend.vue
+
+把slider作为基础的组件开发
+
+
+<template>
+  <div class="slider" ref="slider">
+    <div class="slider-group" ref="sliderGroup">
+      <slot>
+      </slot>
+    </div>
+    <div class="dots">
+      <span class="dot" :class="{active: currentPageIndex === index }" v-for="(item, index) in dots" :key="index"></span>
+    </div>
+  </div>
+</template>
+
+// <slot></slot>把内容显示出来
+
+mounted周期中 创建setTimeout延时20ms(页面刷新时间大概为17ms)  也可以使用nextTick方法
+
+this._setSliderWidth()  ---> 设置容器的宽度
+this._initSlider() ---> 初始化BScroll对象
+
+dom.js ---> 定义一些DOM操作的方法
+    hasClass   -- 正则判断
+    addClass
+```
