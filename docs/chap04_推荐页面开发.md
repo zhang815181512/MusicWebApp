@@ -169,3 +169,50 @@ dom.js ---> 定义一些DOM操作的方法
     hasClass   -- 正则判断
     addClass
 ```
+
+### 导航点dots开发
+```
+// dots数量等于图片的个数，所以可以创建一个长度为 5 的数组
+初始化定义data值  dots: [], currentPageIndex: 0
+_initDots() {
+  this.dots = new Array(this.children.length)
+},
+
+// 定义导航点的方法
+BScroll对象的API
+this.slider.on('scrollEnd', () => {
+  let pageIndex = this.slider.getCurrentPage().pageX
+  if (this.loop) {
+    pageIndex -= 1
+  }
+  this.currentPageIndex = pageIndex
+
+  if (this.autoPlay) {  // 自动播放调用自动的方法
+    this._play()
+  }
+})
+
+
+_play() {
+  let pageIndex = this.currentPageIndex + 1
+  if (this.loop) {
+    pageIndex += 1
+  }
+  this.timer = setTimeout(() => {
+    this.slider.goToPage(pageIndex, 0, 400)
+  }, this.interval)
+}
+```
+
+### 优化适口变化问题
+```javascript
+// 监听适口变化
+window.addEventListener('resize', () => {
+  if (!this.slider) {
+    return
+  }
+  this._setSliderWidth(true)  // 传入一个标识isResize  不能让直行 2倍宽度
+  this.slider.refresh()
+})
+
+```

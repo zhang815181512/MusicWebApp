@@ -11,8 +11,8 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import BScroll from 'better-scroll'
   import {addClass} from 'common/js/dom'
+  import BScroll from 'better-scroll'
 
   export default {
     name: 'slider',
@@ -38,12 +38,36 @@
     },
     mounted () {
       setTimeout(() => {
-        this._setSilderWidth()
+        this._setSliderWidth()
         this._initSlider()
+        this._initDots()
+
+        if (this.autoPlay) {
+          this._play()
+        }
       }, 20) // 20ms经验值
+
+      window.addEventListener('resize', () => {
+        if (!this.slider) {
+          return
+        }
+        this._setSliderWidth(true)
+        this.slider.refresh()
+      })
+    },
+    activated() {
+      if (this.autoPlay) {
+        this._play()
+      }
+    },
+    deactivated() {
+      clearTimeout(this.timer)
+    },
+    beforeDestroy() {
+      clearTimeout(this.timer)
     },
     methods: {
-      _setSilderWidth () {
+      _setSliderWidth (isResize) {
         // 设置slider容器的宽度
         this.children = this.$refs.sliderGroup.children
 
@@ -56,7 +80,7 @@
           child.style.width = sliderWidth + 'px'
           width += sliderWidth
         }
-        if (this.loop) {
+        if (this.loop && !isResize) {
           width += 2 * sliderWidth
         }
         this.$refs.sliderGroup.style.width = width + 'px'
@@ -69,9 +93,40 @@
           snap: true,
           snapLoop: this.loop,
           snapThreshold: 0.3,
-          snapSpeed: 400,
-          click: true
+          snapSpeed: 400
+          // click: true
         })
+
+        this.slider.on('scrollEnd', () => {
+          let pageIndex = this.slider.getCurrentPage().pageX
+          if (this.loop) {
+            pageIndex -= 1
+          }
+          this.currentPageIndex = pageIndex
+
+          if (this.autoPlay) {
+            clearTimeout(this.timer)
+            this._play()
+          }
+        })
+
+        this.slider.on('beforeScrollStart', () => {
+          if (this.autoPlay) {
+            clearTimeout(this.timer)
+          }
+        })
+      },
+      _initDots () {
+        this.dots = new Array(this.children.length)
+      },
+      _play () {
+        let pageIndex = this.currentPageIndex + 1
+        if (this.loop) {
+          pageIndex += 1
+        }
+        this.timer = setTimeout(() => {
+          this.slider.goToPage(pageIndex, 0, 400)
+        }, this.interval)
       }
     }
   }
@@ -96,8 +151,8 @@
           overflow hidden
           text-decoration none
         img
-          display: block
-          width: 100%
+          display block
+          width 100%
     .dots
       position absolute
       right 0
