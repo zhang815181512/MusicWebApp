@@ -1,6 +1,6 @@
 // recommend.js 封装网络请求方法
 import jsonp from 'common/js/jsonp'
-// 不使用{jsonp}因为jsonp.js导出使用的是export default
+// 不使用{jsonp}因为jsonp.js导出使用的是 export default
 import {commonParams, options} from './config'
 
 export function getRecommend() {
@@ -19,7 +19,7 @@ export function getRecommend() {
   *    &jsonpCallback=__jp0
   *
   *    data = {
-  *     g_tk: 1928093487,
+  *     g_tk: 1557387597,
   *     inCharset: 'utf-8',
   *     outCharset: 'utf-8',
   *     notice: 0,

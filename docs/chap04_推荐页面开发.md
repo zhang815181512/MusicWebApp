@@ -1,6 +1,14 @@
 # chap04_推荐页面开发
 
 ## 轮播图数据
+打开QQ音乐手机版本，查看请求 Network --> XHR 得到发送的请求路径 (Response中可以看到请求过来的数据)
+```
+// header 中的 Request URL
+https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg?
+g_tk=1557387597&uin=935713472&format=json&
+inCharset=utf-8&outCharset=utf-8&notice=0&
+platform=h5&needNewCode=1&_=1529480311041
+```
 
 ### 封装JSONP
 * JSONP简介及原理
@@ -126,3 +134,6 @@ export default {
   }
 }
 ```
+
+## 轮播图组件
+### slider基础组件开发
