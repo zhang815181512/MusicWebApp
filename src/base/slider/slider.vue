@@ -60,10 +60,14 @@
         this._play()
       }
     },
-    deactivated() {
-      clearTimeout(this.timer)
-    },
-    beforeDestroy() {
+
+    // deactivated() {
+    //   clearTimeout(this.timer)
+    // },
+    // beforeDestroy() {
+    //   clearTimeout(this.timer)
+    // },
+    destroyed() {
       clearTimeout(this.timer)
     },
     methods: {

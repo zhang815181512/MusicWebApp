@@ -216,3 +216,38 @@ window.addEventListener('resize', () => {
 })
 
 ```
+
+### 优化点
+* keep-alive
+* 当切换页面时要把定时器销毁
+
+
+## 歌单数据
+* 此处数据按照上述方式来拿，结果报错500，服务器不给提供服务
+* dev-server.js 数据代理服务
+[最新的vue没有dev-server.js文件，如何进行后台数据模拟？](https://blog.csdn.net/qq_34645412/article/details/78833860)
+
+```javascript
+const express = require('express')
+const axios = require('axios')
+const app = express()
+const apiRoutes = express.Router()
+
+// 获取歌单数据接口
+apiRoutes.get('/getDiscList', function (req, res) {
+  const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+  axios.get(url, {
+    headers: {
+      referer: 'https://c.y.qq.com/',
+      host: 'c.y.qq.com'
+    },
+    params: req.query
+  }).then((response) => {
+    res.json(response.data)
+  }).catch((e) => {
+    console.log(e)
+  })
+})
+
+app.use('/api', apiRoutes)
+```
