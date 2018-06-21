@@ -381,3 +381,22 @@ _initSlider () {
   // }
 }
 ```
+
+## 推荐页面歌单列表数据展示
+```
+// src/components/recommend/recommend.vue
+// v-html用于输出html，它与v-text区别在于v-text输出的是纯文本，浏览器不会对其再进行html解析，
+//    但v-html会将其当html标签解析后输出。  
+// {{}}是v-text的简写形式
+<ul>
+  <li v-for="(item, index) in discList" :key="index" class="item">
+    <div class="icon">
+      <img width="60" height="60" :src="item.imgurl">
+    </div>
+    <div class="text">
+      <h2 class="name" v-html="item.creator.name"></h2>
+      <p class="desc" v-html="item.dissname"></p>
+    </div>
+  </li>
+</ul>
+```
