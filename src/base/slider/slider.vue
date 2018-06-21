@@ -28,6 +28,10 @@
       interval: {
         type: Number,
         default: 4000
+      },
+      threshold: {
+        type: Number,
+        default: 0.3
       }
     },
     data() {
@@ -39,14 +43,18 @@
     mounted () {
       setTimeout(() => {
         this._setSliderWidth()
-        this._initSlider()
+
+        // 顺序顺序顺序！！！
+        // 在初始化slider前初始化dot
         this._initDots()
+        this._initSlider()
 
         if (this.autoPlay) {
           this._play()
         }
       }, 20) // 20ms经验值
 
+      // 监听窗口大小
       window.addEventListener('resize', () => {
         if (!this.slider) {
           return
@@ -61,7 +69,7 @@
       }
     },
 
-    // deactivated() {
+    // deactivated() { // 当一个保持活动的组件被停用时调用
     //   clearTimeout(this.timer)
     // },
     // beforeDestroy() {
@@ -76,10 +84,13 @@
         this.children = this.$refs.sliderGroup.children
 
         let width = 0
+
+        // slider 可见宽度
         let sliderWidth = this.$refs.slider.clientWidth
 
         for (let i = 0; i < this.children.length; i++) {
           let child = this.children[i]
+          // 设置每个子元素的样式及高度
           addClass(child, 'slider-item')
           child.style.width = sliderWidth + 'px'
           width += sliderWidth
@@ -94,25 +105,39 @@
           scrollX: true,
           scrollY: false,
           momentum: false,
-          snap: true,
-          snapLoop: this.loop,
-          snapThreshold: 0.3,
-          snapSpeed: 400
+          snap: {
+            loop: this.loop,
+            Threshold: 0.3,
+            threshold: this.threshold,
+            speed: this.speed
+          }
+          // snap: true,
+          // snapLoop: this.loop,
+          // snapThreshold: 0.3,
+          // snapSpeed: 400
           // click: true
         })
 
-        this.slider.on('scrollEnd', () => {
-          let pageIndex = this.slider.getCurrentPage().pageX
-          if (this.loop) {
-            pageIndex -= 1
-          }
-          this.currentPageIndex = pageIndex
-
+        this.slider.on('scrollEnd', this._onScrollEnd)
+        this.slider.on('touchEnd', () => {
           if (this.autoPlay) {
-            clearTimeout(this.timer)
             this._play()
           }
         })
+        // this.slider.on('scrollEnd', () => {
+        //   // 第一轮1（第一张图） 2 3 4 0（最后一张图索引为0 因为放在了最前面）  1 2 3 4 0
+        //   let pageIndex = this.slider.getCurrentPage().pageX
+        //   if (this.loop) {
+        //     // 当前索引值
+        //     pageIndex -= 1
+        //   }
+        //   this.currentPageIndex = pageIndex
+        //
+        //   if (this.autoPlay) {
+        //     // clearTimeout(this.timer)
+        //     this._play()
+        //   }
+        // })
 
         this.slider.on('beforeScrollStart', () => {
           if (this.autoPlay) {
@@ -123,15 +148,29 @@
       _initDots () {
         this.dots = new Array(this.children.length)
       },
-      _play () {
-        let pageIndex = this.currentPageIndex + 1
-        if (this.loop) {
-          pageIndex += 1
+      _onScrollEnd() {
+        let pageIndex = this.slider.getCurrentPage().pageX
+        this.currentPageIndex = pageIndex // 第一轮1（第一张图） 2 3 4 0（最后一张图索引为0 因为放在了最前面）  1 2 3 4 0
+        if (this.autoPlay) {
+          this._play()
         }
+      },
+      _play () {
+        clearTimeout(this.timer)
         this.timer = setTimeout(() => {
-          this.slider.goToPage(pageIndex, 0, 400)
+          this.slider.next()
         }, this.interval)
       }
+      // _play () {
+      //   let pageIndex = this.currentPageIndex + 1
+      //   console.log('当前页数' + pageIndex)
+      //   if (this.loop) {
+      //     pageIndex += 1
+      //   }
+      //   this.timer = setTimeout(() => {
+      //     this.slider.goToPage(pageIndex, 0, 400)
+      //   }, this.interval)
+      // }
     }
   }
 </script>

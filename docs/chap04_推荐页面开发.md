@@ -251,3 +251,133 @@ apiRoutes.get('/getDiscList', function (req, res) {
 
 app.use('/api', apiRoutes)
 ```
+
+## 使用Vue2.0踩坑
+课程教学采用的是vue1.x版本，最新的使用vue-cli脚手架搭建的项目是基于vue2.x，
+所有有些配置有略微的不同，还是要好好的琢磨总结一下的
+
+### 问题一：`vue-music_/api/getDiscList` 接口报404错误解决
+
+```
+/*
+* https://www.ljwit.com/archives/web/726.html
+* 
+* 由于旧版本dev-server.js和新版本webpack.dev.conf.js导致得，
+* 现在配置dev-server直接转移到了webpack.dev.conf中
+* 
+* 在devserver对象中添加before(){}
+* */
+
+before(app){
+  app.get('/api/getDiscList', function (req, res) {
+    const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+    axios.get(url, {
+      headers: {
+        referer: 'https://c.y.qq.com/',
+        host: 'c.y.qq.com'
+      },
+      params: req.query
+    }).then((response) => {
+      res.json(response.data)
+    }).catch((err) => {
+      console.log(err)
+    })
+  })
+}
+```
+
+### 问题二：slider的children数量与dots的数量
+
+```javascript
+/*
+ * https://segmentfault.com/q/1010000010838595
+ * http://www.cnblogs.com/catbrother/p/9180876.html
+ * 
+ * 可能有一个时机的问题吧？？？ 
+ *   this._initDots() 在 this._initSlider() 就是5个点
+ *   反之就是7个dots   但查看数据是对的？？？？
+ *   // 在初始化slider前初始化dot
+ */
+ 
+setTimeout(() => {
+  this._setSliderWidth()
+  // 顺序顺序顺序！！！
+  this._initDots()
+  this._initSlider()
+
+  if (this.autoPlay) {
+    this._play()
+  }
+}, 20) 
+
+```
+### 问题三：自动播放与dots效果对应
+```
+// 最后一个总是不能对应上  currentIndex 不能取到4
+// http://www.cnblogs.com/catbrother/p/9180876.html
+
+_initSlider () {
+  this.slider = new BScroll(this.$refs.slider, {
+    scrollX: true,
+    scrollY: false,
+    momentum: false,
+    snap: {
+      loop: this.loop,
+      Threshold: 0.3,
+      threshold: this.threshold,
+      speed: this.speed
+    }
+  })
+
+    this.slider.on('scrollEnd', this._onScrollEnd)
+    this.slider.on('touchEnd', () => {
+      if (this.autoPlay) {
+        this._play()
+      }
+    })
+    // this.slider.on('scrollEnd', () => {
+    //   // 第一轮1（第一张图） 2 3 4 0（最后一张图索引为0 因为放在了最前面）  1 2 3 4 0
+    //   let pageIndex = this.slider.getCurrentPage().pageX
+    //   if (this.loop) {
+    //     // 当前索引值
+    //     pageIndex -= 1
+    //   }
+    //   this.currentPageIndex = pageIndex
+    //
+    //   if (this.autoPlay) {
+    //     // clearTimeout(this.timer)
+    //     this._play()
+    //   }
+    // })
+
+    this.slider.on('beforeScrollStart', () => {
+      if (this.autoPlay) {
+        clearTimeout(this.timer)
+      }
+    })
+  },
+  _onScrollEnd() {
+    let pageIndex = this.slider.getCurrentPage().pageX
+    this.currentPageIndex = pageIndex // 第一轮1（第一张图） 2 3 4 0（最后一张图索引为0 因为放在了最前面）  1 2 3 4 0
+    if (this.autoPlay) {
+      this._play()
+    }
+  },
+  _play () {
+    clearTimeout(this.timer)
+    this.timer = setTimeout(() => {
+      this.slider.next()
+    }, this.interval)
+  }
+  // _play () {
+  //   let pageIndex = this.currentPageIndex + 1
+  //   console.log('当前页数' + pageIndex)
+  //   if (this.loop) {
+  //     pageIndex += 1
+  //   }
+  //   this.timer = setTimeout(() => {
+  //     this.slider.goToPage(pageIndex, 0, 400)
+  //   }, this.interval)
+  // }
+}
+```

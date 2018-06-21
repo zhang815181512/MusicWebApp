@@ -26,8 +26,8 @@ apiRoutes.get('/getDiscList', function (req, res) {
     params: req.query
   }).then((response) => {
     res.json(response.data)
-  }).catch((e) => {
-    console.log(e)
+  }).catch((err) => {
+    console.log(err)
   })
 })
 
@@ -65,6 +65,23 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     quiet: true, // necessary for FriendlyErrorsPlugin
     watchOptions: {
       poll: config.dev.poll,
+    },
+    // 问题解决：https://www.ljwit.com/archives/web/726.html
+    before(app) {
+      app.get('/api/getDiscList', function (req, res) {
+        const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg'
+        axios.get(url, {
+          headers: {
+            referer: 'https://c.y.qq.com/',
+            host: 'c.y.qq.com'
+          },
+          params: req.query
+        }).then((response) => {
+          res.json(response.data)
+        }).catch((err) => {
+          console.log(err)
+        })
+      })
     }
   },
   plugins: [

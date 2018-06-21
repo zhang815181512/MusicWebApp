@@ -7,6 +7,8 @@
 
 * 歌手页面、歌手详情页面、播放器内核、搜索页面、歌曲列表页面等等
 * 13个技术组件和15个业务组件
+* 预览效果 [VueWebApp](http://ustbhuangyi.com/music/#/recommend)
+* 在线播放 http://ustbhuangyi.com/music/#/recommend
 
 ### 预期收获
 
