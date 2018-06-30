@@ -227,3 +227,22 @@ fixedTitle () {
 ```
 * 效果优化
 当下一个要顶上去时当前显示的慢慢消失
+```vue
+// 监视diff变化
+diff (newVal) {
+  let fixedTop = (newVal > 0 && newVal < TITLE_HEIGHT) ? newVal - TITLE_HEIGHT : 0
+  if (this.fixedTop === fixedTop) {
+    return
+  }
+  this.fixedTop = fixedTop
+  // diff 实时变化 修改
+  this.$refs.fixed.style.transform = `translate3d(0,${fixedTop}px,0)`
+}
+```
+
+## 数据loading图
+```vue
+<div v-show="!data.length" class="loading-container">
+  <loading></loading>
+</div>
+```
