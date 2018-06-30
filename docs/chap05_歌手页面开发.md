@@ -211,3 +211,19 @@ if (this.listenScroll) {
 知道对应的索引，监视数据变化
 
 ### 固定标题
+* 简单实现
+```vue
+<div class="list-fixed" ref="fixed" v-show="fixedTitle">
+  <div class="fixed-title">{{fixedTitle}} </div>
+</div>
+
+// 计算fixedTitle
+fixedTitle () {
+  if (this.scrollY > 0) {
+    return ''
+  }
+  return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
+}
+```
+* 效果优化
+当下一个要顶上去时当前显示的慢慢消失
