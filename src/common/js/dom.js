@@ -19,3 +19,13 @@ export function addClass(el, className) {
     newClass.push(className)
     el.className = newClass.join(' ')
 }
+
+export function getData(ele, name, val) {
+  const prefix = 'data-'
+  name = prefix + name
+  if (val) {
+    return ele.setAttribute(name, val)
+  } else {
+    return ele.getAttribute(name)
+  }
+}

@@ -130,3 +130,66 @@ export default {
 
 // 请求头像懒加载
 ```
+
+### 右侧快速入口功能实现
+* 数据展示
+```
+// 计算出快速入口数据
+computed: {
+  // 右侧快速导航
+  shortcutList() {
+    return this.data.map((group) => {
+      return group.title.substr(0, 1)
+    })
+  }
+},
+
+// 遍历展示
+<div class="list-shortcut">
+  <ul>
+    <li class="item" v-for="(item, index) in shortcutList" :key="index">
+      {{item}}
+    </li>
+  </ul>
+</div>
+```
+
+* 锚点跳转
+```vue
+onShortcutTouchStart (ele) {
+  // 点击时拿到对应的index (封装dom方法)
+  let anchorIndex = getData(ele.target, 'index')
+  // scroll扩展滚动到某个位置的方法 scrollTo() scrollToElement()
+  this.$refs.listview.scrollToElement(this.$refs.listGroup[anchorIndex], 0)
+},
+```
+
+* 锚点滑动左边的歌手跟着滚动
+```vue
+_scrollTo(index) {
+  // 第二个参数表示要不要动画时间
+  this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
+},
+onShortcutTouchStart (ele) {
+  // 点击时拿到对应的index(封装dom方法)
+  let anchorIndex = getData(ele.target, 'index')
+  // 获取第一次点击时的位置
+  let firstTouch = ele.touches[0]
+  this.touch.y1 = firstTouch.pageY
+  this.touch.anchorIndex = anchorIndex
+  // scroll扩展滚动到某个位置的方法 scrollTo() scrollToElement()
+  this._scrollTo(anchorIndex)
+},
+// 监听快速入口的滑动
+onShortcutTouchMove (ele) {
+  let firstTouch = ele.touches[0]
+  this.touch.y2 = firstTouch.pageY
+
+  // 计算偏移/锚点高度  取整就得到新的index (得到了偏移几个锚点)
+  let delta = (this.touch.y2 - this.touch.y1) / ANCHOR_HEIGHT | 0
+  // 新的锚点位置
+  let anchorIndex = parseInt(this.touch.anchorIndex) + delta
+  this._scrollTo(anchorIndex)
+}
+
+```
