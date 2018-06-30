@@ -63,8 +63,9 @@
           click: this.click
         })
 
+        // 监听滚动事件
         if (this.listenScroll) {
-          let me = this
+          let me = this // 保存一下vm的实例
           this.scroll.on('scroll', (pos) => {
             me.$emit('scroll', pos)
           })

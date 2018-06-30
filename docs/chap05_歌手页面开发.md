@@ -98,7 +98,7 @@ export default class Singer {
 }
 ```
 
-## listview 歌手数据展示
+## listview 歌手数据展示（逻辑比较多要多理解几遍）
 ### 基础数据渲染
 ```
 <template>
@@ -132,7 +132,7 @@ export default {
 ```
 
 ### 右侧快速入口功能实现
-* 数据展示
+#### 数据展示
 ```
 // 计算出快速入口数据
 computed: {
@@ -154,7 +154,7 @@ computed: {
 </div>
 ```
 
-* 锚点跳转
+#### 锚点跳转
 ```vue
 onShortcutTouchStart (ele) {
   // 点击时拿到对应的index (封装dom方法)
@@ -164,7 +164,7 @@ onShortcutTouchStart (ele) {
 },
 ```
 
-* 锚点滑动左边的歌手跟着滚动
+#### 锚点滑动左边的歌手跟着滚动
 ```vue
 _scrollTo(index) {
   // 第二个参数表示要不要动画时间
@@ -191,5 +191,23 @@ onShortcutTouchMove (ele) {
   let anchorIndex = parseInt(this.touch.anchorIndex) + delta
   this._scrollTo(anchorIndex)
 }
+```
+
+#### 滚动右侧快速入口高亮
+```vue
+// scroll 增加方法
+// 监听滚动事件
+if (this.listenScroll) {
+  let me = this // 保存一下vm的实例
+  this.scroll.on('scroll', (pos) => {
+    me.$emit('scroll', pos)
+  })
+}
 
 ```
+#### 联动总结
+首先需要实时知道滚动的位置，
+根据滚动位置来计算item落到了group的区间,
+知道对应的索引，监视数据变化
+
+### 固定标题
