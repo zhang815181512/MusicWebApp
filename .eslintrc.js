@@ -33,6 +33,8 @@ module.exports = {
     "eol-last": 0, //文件以单一的换行符结束
     "space-before-function-paren": [0, "always"], //函数定义时括号前面要不要有空格
     "indent": ["off", 2],  // 旨在强制使用一致的缩进风格，默认是4个
-    "no-trailing-spaces": 'off'  // //一行结束后面可要不要有空格
+    "no-trailing-spaces": 'off',  // //一行结束后面可要不要有空格
+    "quotes": ['off', "single", { "avoidEscape": true }],
+    "no-multi-spaces": ['off']
   }
 }

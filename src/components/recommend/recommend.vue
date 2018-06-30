@@ -1,12 +1,12 @@
 <template>
-  <div class="recommend">
-    <div class="recommend-content">
+  <div class="recommend" ref="recommend">
+    <scroll ref="scroll" class="recommend-content" :data="discList">
       <div>
         <div class="slider-wrapper" v-if="recommends.length" ref="sliderWrapper">
           <slider>
             <div v-for="(item, index) in recommends" :key="index">
               <a :href="item.linkUrl">
-                <img class="needsclick" :src="item.picUrl">
+                <img class="needsclick" :src="item.picUrl" @load="loadImage">
               </a>
             </div>
           </slider>
@@ -16,7 +16,7 @@
           <ul>
             <li class="item" v-for="(item, index) in discList" :key="index">
               <div class="icon">
-                <img width="60" height="60" :src="item.imgurl">
+                <img width="60" height="60" v-lazy="item.imgurl">
               </div>
               <div class="text">
                 <h2 class="name" v-html="item.creator.name"></h2>
@@ -26,13 +26,18 @@
           </ul>
         </div>
       </div>
-    </div>
-
+      <div class="loading-container" v-show="!discList.length">
+        <loading></loading>
+      </div>
+    </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import Slider from 'base/slider/slider'
+  import Scroll from 'base/scroll/scroll'
+  import Loading from 'base/loading/loading'
   import {getRecommend, getDiscList} from 'api/recommend'
   import {ERR_OK} from 'api/config'
 
@@ -45,6 +50,7 @@
     },
     created() {
       this._getRecommend()
+      // discList 数据优先于 recommend 获取的
       this._getDiscList()
     },
     methods: {
@@ -62,10 +68,22 @@
             this.discList = res.data.list
           }
         })
+      },
+      // 因为列表的数据是动态加载进来的，就会出现滚动时数据没有拿到
+      // 列表的高度是根据图片撑开的，所以可以监听图片的加载事件
+      // 哪怕recommendList数据是后来的我们也可以滚动到页面底部
+      loadImage () {
+        // 一旦图片加载就让scroll 刷新，但不能是每次图片加载都刷新一次，可以做一个标识
+        if (!this.checkLoaded) {
+          this.$refs.scroll.refresh()
+          this.checkLoaded = true
+        }
       }
     },
     components: {
-      Slider
+      Slider,
+      Scroll,
+      Loading
     }
   }
 </script>

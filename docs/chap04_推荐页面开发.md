@@ -399,4 +399,118 @@ _initSlider () {
     </div>
   </li>
 </ul>
+
+歌单的布局采用了flex布局，根据屏幕自适应
+.item
+  display flex
+  box-sizing border-box
+  align-items center  // 横向居中
+  padding 0 20px 20px 20px
+  .text
+    display flex
+    flex-direction column
+    justify-content center  // 纵向居中
+    flex 1
+    line-height 20px
+    overflow hidden
 ```
+
+## 抽取滚动组件scroll
+* 用到的地方比较多，可以抽取作为基础的自己按使用
+
+### scroll基础组件
+``` 
+<template>
+  <div ref="wrapper">
+    <slot></slot>
+  </div>
+</template>
+
+<script type="text/ecmascript-6">
+  import BScroll from 'better-scroll'
+  /*
+  * probeType:
+  *    1：滚动的时候会派发scroll事件，会截流。
+  *    2：滚动的时候实时派发scroll事件，不会截流。
+  *    3：除了实时派发scroll事件，在swipe的情况下仍然能实时派发scroll事件
+  *
+  * */
+  export default {
+    props: {
+      probeType: {
+        type: Number,
+        default: 1
+      },
+      click: {
+        type: Boolean,
+        default: true
+      },
+      data: {
+        type: Array,
+        default: null
+      }
+    },
+    data() {
+      return {
+      }
+    },
+    mounted() {
+      setTimeout(() => {
+        this._initScroll()
+      }, 20)
+    },
+    methods: {
+      _initScroll() {   // 定义初始化滚动的方法
+        if (!this.$refs.wrapper) {
+          return
+        }
+        this.scroll = new BScroll(this.$refs.wrapper, {
+          probeType: this.probeType,
+          click: this.click
+        })
+      },
+      // 定义一些组件代理的方法
+      enable() {
+        this.scroll && this.scroll.enable()
+      },
+      disable() {
+        this.scroll && this.scroll.disable()
+      },
+      refresh() {  // 刷新scroll重新计算高度
+        this.scroll && this.scroll.refresh()
+      }
+    }
+  }
+</script>
+```
+
+### recommend组件用上这个scroll组件就可以
+* scroll作为一个标签
+* 注意细节
+```
+// 因为列表的数据是动态加载进来的，就会出现滚动时数据没有拿到
+// 列表的高度是根据图片撑开的，所以可以监听图片的加载事件
+// 哪怕recommendList数据是后来的我们也可以滚动到页面底部
+loadImage () {
+  // 一旦图片加载就让scroll 刷新，但不能是每次图片加载都刷新一次，可以做一个标识
+  if (!this.checkLoaded) {
+    this.$refs.scroll.refresh()
+    this.checkLoaded = true
+  }
+}
+```
+
+### 优化图片懒加载
+* 首屏加载时请求到的图片特别多啊
+* 滚动了才加载非首屏图片
+
+```javascript
+// main.js
+import VueLazyload from 'vue-lazyload'
+
+Vue.use(VueLazyload, {
+  loading: require('common/image/default.png')
+})
+```
+
+### loading态组件
