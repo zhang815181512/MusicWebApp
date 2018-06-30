@@ -1,10 +1,12 @@
 <template>
-  <div class="singer">
-    singer  组件
+  <div class="singer" ref="singer">
+    <list-view :data="singers" ref="list"></list-view>
+    <router-view></router-view>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import ListView from 'base/listview/listview'
   import {getSingerList} from 'api/singer'
   import {ERR_OK} from 'api/config'
   import Singer from 'common/js/singer'
@@ -75,6 +77,9 @@
         })
         return hot.concat(ret)
       }
+    },
+    components: {
+      ListView
     }
   }
 </script>

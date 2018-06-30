@@ -97,3 +97,36 @@ export default class Singer {
   }
 }
 ```
+
+## listview 歌手数据展示
+### 基础数据渲染
+```
+<template>
+  <scroll class="listview" :data="data" ref="listview">
+    <ul>
+      <li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
+        <h2 class="list-group-title">{{group.title}}</h2>
+        <ul>
+          <li class="list-group-item" v-for="(item, index) in group.items" :key="index">
+            <img class="avatar" v-lazy="item.avatar" alt="">
+            <span class="name">{{item.name}}</span>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </scroll>
+</template>
+
+
+import Scroll from 'base/scroll/scroll'
+export default {
+  props: {
+    data: {
+      type: Array,
+      default: []
+    }
+  },
+}
+
+// 请求头像懒加载
+```
