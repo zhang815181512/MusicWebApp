@@ -11,16 +11,26 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import {mapGetters} from 'vuex'
+
   export default {
     data() {
       return {
 
       }
     },
+    created() {
+      console.log(this.singer)
+    },
     mounted() {
 
     },
     methods: {},
+    computed: {
+      ...mapGetters([
+        'singer'
+      ])
+    },
     components: {}
   }
 </script>
