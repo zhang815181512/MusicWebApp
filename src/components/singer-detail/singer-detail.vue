@@ -12,6 +12,8 @@
 
 <script type="text/ecmascript-6">
   import {mapGetters} from 'vuex'
+  import {getSingerDetail} from 'api/singer'
+  import {ERR_OK} from 'api/config'
 
   export default {
     data() {
@@ -20,12 +22,26 @@
       }
     },
     created() {
+      this._getDetail()
       console.log(this.singer)
     },
     mounted() {
 
     },
-    methods: {},
+    methods: {
+      _getDetail() {
+        if (!this.singer.id) {    // 操作上的优化，处理边界问题
+          this.$router.push('/singer')
+          return
+        }
+
+        getSingerDetail(this.singer.id).then((res) => {
+          if (res.code === ERR_OK) {
+            console.log(res.data.list)
+          }
+        })
+      }
+    },
     computed: {
       ...mapGetters([
         'singer'
