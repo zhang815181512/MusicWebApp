@@ -1,3 +1,8 @@
+/*
+ * 作为基础组件，只对外派发方法，而自身是不做事件处理的
+ *
+ */
+
 <template>
   <scroll class="listview"
           :data="data"
@@ -9,7 +14,7 @@
       <li class="list-group" v-for="(group, index) in data" :key="index" ref="listGroup">
         <h2 class="list-group-title">{{group.title}}</h2>
         <ul>
-          <li class="list-group-item" v-for="(item, index) in group.items" :key="index">
+          <li class="list-group-item" v-for="(item, index) in group.items" :key="index" @click="selectItem(item)">
             <img class="avatar" v-lazy="item.avatar" alt="">
             <span class="name">{{item.name}}</span>
           </li>
@@ -48,8 +53,8 @@
   export default {
     props: {
       data: {
-        type: Array,
-        default: []
+        type: Array
+        // default: []
       }
     },
     data() {
@@ -135,7 +140,11 @@
           height += item.clientHeight
           this.listHeight.push(height)
         }
+      },
+      selectItem(item) {    // 向外派发数据
+        this.$emit('select', item)
       }
+
     },
     watch: {
       // 当数据变化了调用计算高度
