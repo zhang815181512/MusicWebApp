@@ -3,9 +3,7 @@
 */
 <template>
   <transition name="slide">  <!--为了体验更好添加跳转动画-->
-    <div class="singer-detail">
-      singer-detail Pages
-    </div>
+    <music-list :title="title" :bg-image="bgImage" :songs="songs"></music-list>
   </transition>
 
 </template>
@@ -15,6 +13,7 @@
   import {getSingerDetail} from 'api/singer'
   import {createSong} from 'common/js/song'
   import {ERR_OK} from 'api/config'
+  import MusicList from 'components/music-list/music-list'
 
   export default {
     data() {
@@ -38,7 +37,6 @@
         getSingerDetail(this.singer.id).then((res) => {
           if (res.code === ERR_OK) {
             this.songs = this._normalizeSong(res.data.list)
-            console.log(this.songs)
           }
         })
       },
@@ -54,11 +52,19 @@
       }
     },
     computed: {
+      title() {
+        return this.singer.name
+      },
+      bgImage() {
+        return this.singer.avatar
+      },
       ...mapGetters([
         'singer'
       ])
     },
-    components: {}
+    components: {
+      MusicList
+    }
   }
 </script>
 
