@@ -13,17 +13,17 @@
 <script type="text/ecmascript-6">
   import {mapGetters} from 'vuex'
   import {getSingerDetail} from 'api/singer'
+  import {createSong} from 'common/js/song'
   import {ERR_OK} from 'api/config'
 
   export default {
     data() {
       return {
-
+        songs: []
       }
     },
     created() {
       this._getDetail()
-      console.log(this.singer)
     },
     mounted() {
 
@@ -37,9 +37,20 @@
 
         getSingerDetail(this.singer.id).then((res) => {
           if (res.code === ERR_OK) {
-            console.log(res.data.list)
+            this.songs = this._normalizeSong(res.data.list)
+            console.log(this.songs)
           }
         })
+      },
+      _normalizeSong(list) {
+        let ret = []
+        list.forEach((item) => {
+          let {musicData} = item
+          if (musicData.songid && musicData.albummid) {
+            ret.push(createSong(musicData))
+          }
+        })
+        return ret
       }
     },
     computed: {
