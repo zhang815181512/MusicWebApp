@@ -73,13 +73,25 @@
     },
     watch: {
       scrollY(newY) {
-        let translateY = Math.max(this.minTranslateY, newY)
         // console.log(newY)
+        let translateY = Math.max(this.minTranslateY, newY)
         let zIndex = 0
+        let scale = 1
+        let blur = 0  // 向上滑动图片模糊效果
+        const percent = Math.abs(newY / this.imageHeight)
+        // 向下拉动图片放大的效果
+        if (newY > 0) {
+          scale = 1 + percent
+          zIndex = 10
+        } else {
+          blur = Math.min(20, percent * 20)
+        }
         // 效果优化判断
         this.$refs.layer.style['transform'] = `translate3d(0,${translateY}px,0)`
         this.$refs.layer.style['webkitTransform'] = `translate3d(0,${translateY}px,0)`
-
+        this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`  // 设置高斯模糊（原生ios可以看出来）
+        this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
+        // 向上移动图片被遮起来
         if (newY < this.minTranslateY) {
           zIndex = 10
           this.$refs.bgImage.style.paddingTop = 0
@@ -88,6 +100,9 @@
           this.$refs.bgImage.style.paddingTop = '70%'
           this.$refs.bgImage.style.height = 0
         }
+
+        this.$refs.bgImage.style['transform'] = `scale(${scale})`
+        this.$refs.bgImage.style['webkitTransform'] = `scale(${scale})`
         this.$refs.bgImage.style.zIndex = zIndex
       }
     }
