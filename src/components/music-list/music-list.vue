@@ -5,6 +5,12 @@
     </div>
     <h1 class="title" v-html="title"></h1>
     <div class="bg-image" :style="bgStyle" ref="bgImage">
+      <div class="play-wrapper">
+        <div class="play" ref="playBtn" v-show="songs.length>0" @click="random">
+          <i class="icon-play"></i>
+          <span class="text">随机播放全部</span>
+        </div>
+      </div>
       <div class="filter" ref="filter"></div>
     </div>
     <div class="bg-layer" ref="layer"></div>
@@ -13,6 +19,9 @@
       <div class="song-list-wrapper">
         <song-list :songs="songs"></song-list>
       </div>
+      <div class="loading-container" v-show="!songs.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -20,6 +29,7 @@
 <script type="text/ecmascript-6">
   import Scroll from 'base/scroll/scroll'
   import SongList from 'base/song-list/song-list'
+  import Loading from 'base/loading/loading'
   import {prefixStyle} from 'common/js/dom'
 
   const RESERVED_HEIGHT = 40  // 预留上边的高度
@@ -68,11 +78,18 @@
       },
       scroll(pos) {
         this.scrollY = pos.y
+      },
+      random() {
+        console.log("111")
+        // this.randomPlay({
+        //   list: this.songs
+        // })
       }
     },
     components: {
       Scroll,
-      SongList
+      SongList,
+      Loading
     },
     watch: {
       scrollY(newY) {
@@ -97,9 +114,11 @@
           zIndex = 10
           this.$refs.bgImage.style.paddingTop = 0
           this.$refs.bgImage.style.height = `${RESERVED_HEIGHT}px`
+          this.$refs.playBtn.style.display = 'none'
         } else {
           this.$refs.bgImage.style.paddingTop = '70%'
           this.$refs.bgImage.style.height = 0
+          this.$refs.playBtn.style.display = ''
         }
 
         this.$refs.bgImage.style[transform] = `scale(${scale})`
