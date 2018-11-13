@@ -17,7 +17,7 @@
     <scroll @scroll="scroll" :probe-type="probeType" :listen-scroll="listenScroll"
             :data="songs" class="list" ref="list">
       <div class="song-list-wrapper">
-        <song-list :songs="songs"></song-list>
+        <song-list @select="selectItem" :songs="songs"></song-list>
       </div>
       <div class="loading-container" v-show="!songs.length">
         <loading></loading>
@@ -27,6 +27,7 @@
 </template>
 
 <script type="text/ecmascript-6">
+  import {mapActions} from 'vuex'
   import Scroll from 'base/scroll/scroll'
   import SongList from 'base/song-list/song-list'
   import Loading from 'base/loading/loading'
@@ -79,12 +80,23 @@
       scroll(pos) {
         this.scrollY = pos.y
       },
+      selectItem(item, index) {
+        // 点击事件（点击song-list操作）
+        // 改变事件：设置歌曲列表、播放列表、播放状态、播放顺序、全屏展示
+        this.selectPlay({
+          list: this.songs,
+          index
+        })
+      },
       random() {
         console.log("111")
         // this.randomPlay({
         //   list: this.songs
         // })
-      }
+      },
+      ...mapActions([
+        'selectPlay'
+      ])
     },
     components: {
       Scroll,
