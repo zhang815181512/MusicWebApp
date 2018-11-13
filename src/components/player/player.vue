@@ -1,5 +1,11 @@
 <template>
   <div class="player" v-show="playlist.length>0">
+    <transition name="normal"
+                @enter="enter"
+                @after-enter="afterEnter"
+                @leave="leave"
+                @after-leave="afterLeave"
+    >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
           <img width="100%" height="100%" :src="currentSong.image">
@@ -40,6 +46,7 @@
           </div>
         </div>
       </div>
+    </transition>
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon">
@@ -61,6 +68,11 @@
 
 <script type="text/ecmascript-6">
   import {mapGetters, mapMutations} from 'vuex'
+  import animations from 'create-keyframe-animation'
+  import {prefixStyle} from 'common/js/dom'
+
+  const transform = prefixStyle('transform')
+
   export default {
     data() {
       return {
@@ -73,6 +85,63 @@
       },
       open() {
         this.setFullScreen(true)
+      },
+      enter(el, done) {
+        /*
+        * 此处js动态创建css3动画  create-keyframe-animation
+        * */
+        const {x, y, scale} = this._getPosAndScale()
+        let animation = {
+          0: {
+            transform: `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+          },
+          60: {
+            transform: `translate3d(0, 0, 0) scale(1.1)`
+          },
+          100: {
+            transform: `translate3d(0, 0, 0) scale(1.0)`
+          }
+        }
+
+        animations.registerAnimation({
+          name: 'move',
+          animation,
+          presets: {
+            duration: 400,
+            easing: 'linear'
+          }
+        })
+
+        animations.runAnimation(this.$refs.cdWrapper, 'move', done)
+      },
+      afterEnter() {
+        animations.unregisterAnimation('move')
+        this.$refs.cdWrapper.style.animation = ''
+      },
+      leave(el, done) {
+        this.$refs.cdWrapper.style.transition = 'all 0.4s'
+        const {x, y, scale} = this._getPosAndScale()
+        this.$refs.cdWrapper.style[transform] = `translate3d(${x}px, ${y}px, 0) scale(${scale})`
+        this.$refs.cdWrapper.addEventListener('transitionend', done)
+      },
+      afterLeave() {
+        this.$refs.cdWrapper.style.transition = ''
+        this.$refs.cdWrapper.style[transform] = ''
+      },
+      _getPosAndScale() {  // 获取位置的方法封装
+        const targetWidth = 40
+        const paddingLeft = 40
+        const paddingBottom = 30
+        const paddingTop = 80
+        const width = window.innerWidth * 0.8
+        const scale = targetWidth / width
+        const x = -(window.innerWidth / 2 - paddingLeft)
+        const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
+        return {
+          x,
+          y,
+          scale
+        }
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN'
