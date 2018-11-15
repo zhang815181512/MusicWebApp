@@ -32,13 +32,13 @@
               <i class="icon-sequence"></i>
             </div>
             <div class="icon i-left">
-              <i class="icon-prev"></i>
+              <i @click="prev" class="icon-prev"></i>
             </div>
             <div class="icon i-center">
               <i @click="togglePlaying" :class="playIcon"></i>
             </div>
             <div class="icon i-right">
-              <i class="icon-next"></i>
+              <i @click="next" class="icon-next"></i>
             </div>
             <div class="icon i-right">
               <i class="icon icon-not-favorite"></i>
@@ -64,7 +64,9 @@
         </div>
       </div>
     </transition>
-    <audio ref="audio" :src="currentSong.url"></audio>
+    <audio ref="audio" :src="currentSong.url"
+           @play="ready" @error="error"
+    ></audio>
   </div>
 </template>
 
@@ -78,7 +80,7 @@
   export default {
     data() {
       return {
-
+        songReady: false
       }
     },
     methods: {
@@ -89,7 +91,49 @@
         this.setFullScreen(true)
       },
       togglePlaying() {
+        if (!this.songReady) {
+          return
+        }
         this.setPlayingState(!this.playing)
+      },
+      prev() {
+        if (!this.songReady) {
+          return
+        }
+
+        let index = this.currentIndex - 1
+        if (index === -1) {
+          index = this.playlist.length - 1
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {     // 如果暂停状态时播放下一首歌曲，切换后默认开启播放
+          this.togglePlaying()
+        }
+
+        this.songReady = false   // 点击完后重新置为false
+      },
+      next() {  // 更改的是 currentIndex
+        if (!this.songReady) {  // 处理快速点击触发的问题
+          return
+        }
+
+        let index = this.currentIndex + 1
+        if (index === this.playlist.length) {  // 边界限定，到最后一首歌曲
+          index = 0
+        }
+        this.setCurrentIndex(index)
+        if (!this.playing) {
+          this.togglePlaying()
+        }
+
+        this.songReady = false
+      },
+      ready() {
+        this.songReady = true
+        // this.savePlayHistory(this.currentSong)
+      },
+      error() {
+        this.songReady = true
       },
       enter(el, done) {
         /*
@@ -150,7 +194,8 @@
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
-        setPlayingState: 'SET_PLAYING_STATE'
+        setPlayingState: 'SET_PLAYING_STATE',
+        setCurrentIndex: 'SET_CURRENT_INDEX'
       })
     },
     computed: {
@@ -167,7 +212,8 @@
         'fullScreen',
         'playlist',
         'currentSong',
-        'playing'
+        'playing',
+        'currentIndex'
       ])
     },
 
