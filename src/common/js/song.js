@@ -4,6 +4,9 @@
 *
 * */
 
+// import {getSongVkey} from '../../api/vkey'
+// import {ERR_OK} from '../../api/config'
+
 export default class Song {
   constructor({id, mid, singer, name, album, duration, image, url}) {
     this.id = id
@@ -21,7 +24,12 @@ export default class Song {
 *   抽象工厂实例化方法
 * */
 export function createSong(musicData) {
-  console.log(musicData)
+  // let vkey = getSongVkey(musicData.songid, musicData.songmid).then((res) => {
+  //   if (res.code === ERR_OK) {
+  //     return res.data.items[0].vkey
+  //   }
+  // })
+
   return new Song({
     id: musicData.songid,
     mid: musicData.songmid,
@@ -30,17 +38,8 @@ export function createSong(musicData) {
     album: musicData.albumname,
     duration: musicData.interval,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-    url: `http://ws.stream.qqmusic.qq.com/${musicData.songmid}.m4a?fromtag=46`
-    // url: `https://thirdparty.gting.com/${musicData.songid}.m4a?fromtag=38`  // 域名不可用啦
-    // url: `http://dl.stream.qqmusic.qq.com/C40000${musicData.songmid}.m4a?&uin=0&fromtag=38`
-    // url: `http://dl.stream.qqmusic.qq.com/C400002E3MtF0IAMMY.m4a?guid=4965975040&vkey=93CA40F14D2C77B120317A26E57A6D4F4DE929D9DB55286A4AA0DDA63D954C72301055AA8611C27F76F5C44C6FEDCD593CD853314479AE94&uin=0&fromtag=38`
-    /*
-    * 抓取歌曲
-    *
-    * http://dl.stream.qqmusic.qq.com/C400002E3MtF0IAMMY.m4a?
-    * guid=4965975040&vkey=93CA40F14D2C77B120317A26E57A6D4F4DE929D9DB55286A4AA0DDA63D954C72301055AA8611C27F76F5C44C6FEDCD593CD853314479AE94&uin=0
-    * &fromtag=38
-    * */
+    url: `http://ws.stream.qqmusic.qq.com/C400${musicData.songmid}.m4a?&guid=9211497888&fromtag=0`
+    // url: `http://220.181.91.147/amobile.music.tc.qq.com/C400${musicData.songmid}.m4a?&guid=9211497888&vkey=${vkey}&uin=0&fromtag=66`
   })
 }
 
