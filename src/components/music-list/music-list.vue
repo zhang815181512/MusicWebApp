@@ -89,13 +89,13 @@
         })
       },
       random() {
-        console.log("111")
-        // this.randomPlay({
-        //   list: this.songs
-        // })
+        this.randomPlay({
+          list: this.songs
+        })
       },
       ...mapActions([
-        'selectPlay'
+        'selectPlay',
+        'randomPlay'
       ])
     },
     components: {

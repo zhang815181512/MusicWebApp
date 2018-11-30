@@ -53,7 +53,7 @@
         const rect = this.$refs.progressBar.getBoundingClientRect()
         const offsetWidth = e.pageX - rect.left
         this._offset(offsetWidth)
-        // 这里当我们点击 progressBtn 的时候，e.offsetX 获取不对
+        // 这里出现问题：当我们点击 progressBtn 的时候，e.offsetX 获取不对
         // this._offset(e.offsetX)
         this._triggerPercent()
       },
