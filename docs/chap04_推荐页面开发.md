@@ -14,9 +14,9 @@ platform=h5&needNewCode=1&_=1529480311041
 * JSONP简介及原理
    * 写js的时候，我们会在script标签里面引入我们需要的js文件，有自己网站上的，也有别的网站上的，不管哪个网站上的js文件，只要引入了，都可以去运行，丝毫不受同源策略的影响。
    * jspon能够跨域，发送的不是ajax请求，利用动态创建script标签，受同源策略的影响。
-   * src指向请求的服务端地址。 
-      * 请求参数 `url ? callback = abc`  
-      * 服务端返回格式 `abc( json )`  
+   * src指向请求的服务端地址。
+      * 请求参数 `url ? callback = abc`
+      * 服务端返回格式 `abc( json )`
       * 前端定义abc方法,可接受到数据。 `function(data){ console.log(data) }`
 
 * 安装
@@ -106,7 +106,7 @@ export function getRecommend() {
 * 推荐界面 `recommend.vue` 获取banner数据
 
 ```javascript
-// 引入网络api    import {getRecommend} from 'api/recommend'  
+// 引入网络api    import {getRecommend} from 'api/recommend'
 //     需要增加 `webpack.base.conf.js`别名的配置 ---> 'api': resolve('src/api')
 // 钩子函数created(){}
 // 方法 methods:{ }
@@ -224,7 +224,7 @@ window.addEventListener('resize', () => {
 
 ## 歌单数据
 * 此处数据按照上述方式来拿，结果报错500，服务器不给提供服务
-* dev-server.js 数据代理服务
+* dev-server222.js 数据代理服务
 [最新的vue没有dev-server.js文件，如何进行后台数据模拟？](https://blog.csdn.net/qq_34645412/article/details/78833860)
 
 ```javascript
@@ -261,10 +261,10 @@ app.use('/api', apiRoutes)
 ```
 /*
 * https://www.ljwit.com/archives/web/726.html
-* 
+*
 * 由于旧版本dev-server.js和新版本webpack.dev.conf.js导致得，
 * 现在配置dev-server直接转移到了webpack.dev.conf中
-* 
+*
 * 在devserver对象中添加before(){}
 * */
 
@@ -292,13 +292,13 @@ before(app){
 /*
  * https://segmentfault.com/q/1010000010838595
  * http://www.cnblogs.com/catbrother/p/9180876.html
- * 
- * 可能有一个时机的问题吧？？？ 
+ *
+ * 可能有一个时机的问题吧？？？
  *   this._initDots() 在 this._initSlider() 就是5个点
  *   反之就是7个dots   但查看数据是对的？？？？
  *   // 在初始化slider前初始化dot
  */
- 
+
 setTimeout(() => {
   this._setSliderWidth()
   // 顺序顺序顺序！！！
@@ -308,7 +308,7 @@ setTimeout(() => {
   if (this.autoPlay) {
     this._play()
   }
-}, 20) 
+}, 20)
 
 ```
 ### 问题三：自动播放与dots效果对应
@@ -386,7 +386,7 @@ _initSlider () {
 ```
 // src/components/recommend/recommend.vue
 // v-html用于输出html，它与v-text区别在于v-text输出的是纯文本，浏览器不会对其再进行html解析，
-//    但v-html会将其当html标签解析后输出。  
+//    但v-html会将其当html标签解析后输出。
 // {{}}是v-text的简写形式
 <ul>
   <li v-for="(item, index) in discList" :key="index" class="item">
@@ -419,7 +419,7 @@ _initSlider () {
 * 用到的地方比较多，可以抽取作为基础的自己按使用
 
 ### scroll基础组件
-``` 
+```
 <template>
   <div ref="wrapper">
     <slot></slot>
