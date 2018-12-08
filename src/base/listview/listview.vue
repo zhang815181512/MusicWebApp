@@ -42,7 +42,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import Scroll from 'base/scroll/scroll'
+  import  Scroll from 'base/scroll/scroll'
   import Loading from 'base/loading/loading'
   import {getData} from 'common/js/dom'
 
@@ -106,6 +106,9 @@
         // 新的锚点位置
         let anchorIndex = parseInt(this.touch.anchorIndex) + delta
         this._scrollTo(anchorIndex)
+      },
+      refresh() {
+        this.$refs.listview.refresh()
       },
       scroll(pos) {
         this.scrollY = pos.y
