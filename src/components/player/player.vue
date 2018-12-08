@@ -140,21 +140,27 @@
           return
         }
         this.setPlayingState(!this.playing)
+
+        if (this.currentLyric) {
+          this.currentLyric.stop()
+        }
       },
       prev() {
         if (!this.songReady) {
           return
         }
-
-        let index = this.currentIndex - 1
-        if (index === -1) {
-          index = this.playlist.length - 1
+        if (this.playlist.length === 1) {
+          this.loop()
+        } else {
+          let index = this.currentIndex - 1
+          if (index === -1) {
+            index = this.playlist.length - 1
+          }
+          this.setCurrentIndex(index)
+          if (!this.playing) {     // 如果暂停状态时播放下一首歌曲，切换后默认开启播放
+            this.togglePlaying()
+          }
         }
-        this.setCurrentIndex(index)
-        if (!this.playing) {     // 如果暂停状态时播放下一首歌曲，切换后默认开启播放
-          this.togglePlaying()
-        }
-
         this.songReady = false   // 点击完后重新置为false
       },
       end () {
@@ -167,19 +173,26 @@
       loop() {
         this.$refs.audio.currentTime = 0
         this.$refs.audio.play()
+        if (this.currentLyric) {
+          this.currentLyric.seek(0)  // 歌词循环播放
+        }
       },
       next() {  // 更改的是 currentIndex
         if (!this.songReady) {  // 处理快速点击触发的问题
           return
         }
 
-        let index = this.currentIndex + 1
-        if (index === this.playlist.length) {  // 边界限定，到最后一首歌曲
-          index = 0
-        }
-        this.setCurrentIndex(index)
-        if (!this.playing) {
-          this.togglePlaying()
+        if (this.playlist.length === 1) {
+          this.loop()
+        } else {
+          let index = this.currentIndex + 1
+          if (index === this.playlist.length) {  // 边界限定，到最后一首歌曲
+            index = 0
+          }
+          this.setCurrentIndex(index)
+          if (!this.playing) {
+            this.togglePlaying()
+          }
         }
 
         this.songReady = false
@@ -225,12 +238,15 @@
           if (this.currentSong.lyric !== lyric) {
             return
           }
-
           this.currentLyric = new Lyric(lyric, this.handleLyric)
           if (this.playing) {
             this.currentLyric.play()
           }
           console.log(this.currentLyric)
+        }).catch(() => {
+          this.currentLyric = null
+          this.playingLyric = ''
+          this.currentLineNum = 0
         })
       },
       handleLyric({lineNum, txt}) {
@@ -241,6 +257,7 @@
         } else {
           this.$refs.lyricList.scrollTo(0, 0, 1000)
         }
+
         this.playingLyric = txt
       },
       middleTouchStart(e) {
@@ -320,6 +337,10 @@
         this.$refs.audio.currentTime = currentTime
         if (!this.playing) {
           this.togglePlaying()
+        }
+
+        if (this.currentLyric) {  // 滚动条切换歌词跳转
+          this.currentLyric.seek(currentTime * 1000)
         }
       },
       enter(el, done) {
@@ -427,10 +448,13 @@
         if (newSong.id === oldSong.id) {
           return
         }
-        this.$nextTick(() => {
+        if (this.currentLyric) {  // 切换歌词要关闭正在播放的歌词
+          this.currentLyric.stop()
+        }
+        setTimeout(() => {
           this.$refs.audio.play()
           this.getLyric()
-        })
+        }, 1000)
       },
       playing(newPlaying) {
         const audio = this.$refs.audio
