@@ -14,7 +14,7 @@
         <div class="recommend-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li class="item" v-for="(item, index) in discList" :key="index">
+            <li class="item" v-for="(item, index) in discList" :key="index" @click="selectItem(item)">
               <div class="icon">
                 <img width="60" height="60" v-lazy="item.imgurl">
               </div>
@@ -41,6 +41,7 @@
   import {getRecommend, getDiscList} from 'api/recommend'
   import {ERR_OK} from 'api/config'
   import {playlistMixin} from 'common/js/mixin'
+  import {mapMutations} from 'vuex'
 
   export default {
     mixins: [playlistMixin],
@@ -76,6 +77,12 @@
           }
         })
       },
+      selectItem(item) {
+        this.$route.push({
+          path: `/recommend/${item.id}`
+        })
+        this.setDisc(item)
+      },
       // 因为列表的数据是动态加载进来的，就会出现滚动时数据没有拿到
       // 列表的高度是根据图片撑开的，所以可以监听图片的加载事件
       // 哪怕recommendList数据是后来的我们也可以滚动到页面底部
@@ -85,7 +92,10 @@
           this.$refs.scroll.refresh()
           this.checkLoaded = true
         }
-      }
+      },
+      ...mapMutations({
+        setDisc: 'SET_DISC'
+      })
     },
     components: {
       Slider,
