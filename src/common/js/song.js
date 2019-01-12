@@ -4,7 +4,7 @@
 *
 * */
 
-// import {getSongVkey} from '../../api/vkey'
+// import {getSongVkey} from 'api/vkey'
 import {getLyric} from 'api/song'
 import {ERR_OK} from 'api/config'
 import {Base64} from 'js-base64'
@@ -59,8 +59,6 @@ export function createSong(musicData) {
     duration: musicData.interval,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
     url: `http://ws.stream.qqmusic.qq.com/C400${musicData.songmid}.m4a?&guid=9211497888&fromtag=0`
-    // url: `http://220.181.91.146/amobile.music.tc.qq.com/C400002E3MtF0IAMMY.m4a?guid=7568678912&vkey=12F9C3A9DE7465726735E30EB2607F30D0F69AAA8E6E71019B9B749A95D281ECE65B3035F75D0C45FD203B1CA8449731A067692F4A23BE59&uin=0&fromtag=66`
-    // url: `http://220.181.91.147/amobile.music.tc.qq.com/C400${musicData.songmid}.m4a?&guid=9211497888&vkey=${vkey}&uin=0&fromtag=66`
   })
 }
 
