@@ -31,7 +31,8 @@
   import {search} from 'api/search'
   import {ERR_OK} from 'api/config'
   import {createSong} from 'common/js/song'
-  // import Singer from 'common/js/singer'
+  import {mapMutations, mapActions} from 'vuex'
+  import Singer from 'common/js/singer'
 
   const TYPE_SINGER = 'singer'
   const perpage = 20
@@ -93,7 +94,22 @@
         this.$emit('listScroll')
       },
       selectItem(item) {
+        if (item.type === TYPE_SINGER) {
+          const singer = new Singer({
+            id: item.singermid,
+            name: item.singername
+          })
 
+          this.$router.push({
+            path: `/search/${singer.id}`
+          })
+
+          this.setSinger(singer)
+        } else {
+          this.insertSong(item)
+        }
+
+        this.$emit('select', item)
       },
       getDisplayName(item) {
         if (item.type === TYPE_SINGER) {
@@ -127,7 +143,13 @@
           }
         })
         return ret
-      }
+      },
+      ...mapMutations({
+        setSinger: 'SET_SINGER'
+      }),
+      ...mapActions([
+        'insertSong'
+      ])
     },
     watch: {
       query(newQuery) {
