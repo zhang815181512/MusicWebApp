@@ -1,13 +1,29 @@
 <template>
   <div class="search">
     <div class="search-box-wrapper">
-      <search-box></search-box>
+      <search-box ref="searchBox"></search-box>
+    </div>
+    <div ref="shortcutWrapper" class="shortcut-wrapper" v-show="!query">
+      <scroll :refreshDelay="refreshDelay" ref="shortcut" class="shortcut" :data="shortcut">
+        <div>
+          <div class="hot-key">
+            <h1 class="title">热门搜索</h1>
+            <ul>
+              <li @click="addQuery(item.k)" class="item" v-for="(item,index) in hotKey" :key="index">
+                <span>{{item.k}}</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </scroll>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import SearchBox from 'base/search-box/search-box'
+  import {getHotKey} from 'api/search'
+  import {ERR_OK} from 'api/config'
   import {playlistMixin} from 'common/js/mixin'
 
   export default {
@@ -21,6 +37,7 @@
 
     },
     created() {
+      this._getHotKey()
     },
     methods: {
       handlePlaylist(playlist) {
@@ -31,6 +48,16 @@
 
         this.$refs.shortcutWrapper.style.bottom = bottom
         this.$refs.shortcut.refresh()
+      },
+      _getHotKey() {
+        getHotKey().then((res) => {
+          if (res.code === ERR_OK) {
+            this.hotKey = res.data.hotkey.slice(0, 10)
+          }
+        })
+      },
+      addQuery(query) {
+        this.$refs.searchBox.setQuery(query)
       }
     },
     watch: {
