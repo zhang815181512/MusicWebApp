@@ -31,7 +31,7 @@
         type: Array,
         default: null
       },
-      pullup: {
+      pullup: { // 开启上拉刷新
         type: Boolean,
         default: false
       },
